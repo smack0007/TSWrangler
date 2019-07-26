@@ -1,0 +1,97 @@
+<Project DefaultTargets="Build">
+    <PropertyGroup>
+        <NewLine>%0A%0D</NewLine>
+        <SourceDirectory>$(MSBuildThisFileDirectory)src/</SourceDirectory>
+        <OutputDirectory>$(MSBuildThisFileDirectory)bin/</OutputDirectory>
+
+        <TsCompilerFlags>-t ES2015 -m None --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
+        <ScssCompilerFlags>--output-style compressed --source-map</ScssCompilerFlags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <HtmlFiles Include="$(SourceDirectory)**/*.html" />
+        <ScssFiles Include="$(SourceDirectory)**/*.scss" />
+        <TsFiles Include="$(SourceDirectory)**/*.ts" />
+    </ItemGroup>
+    
+    <Target Name="Build" DependsOnTargets="BuildTs;BuildScss;BuildHtml" />
+
+    <Target Name="BuildTs">
+        <Message Text="TsFiles = @(TsFiles)" />
+        
+        <PropertyGroup>
+            <BootstrapperTsPath>$(SourceDirectory)bootstrapper.ts</BootstrapperTsPath>
+            <BootstraperTs><![CDATA[
+/// <reference path="App.ts" />
+customElements.define('myapp-app', MyApp.App);
+            ]]></BootstraperTs>
+        </PropertyGroup>
+
+        <WriteLinesToFile
+            File="$(BootstrapperTsPath)"
+            Overwrite="true"
+            Lines="$(BootstraperTs)" />
+
+        <Exec Command="tsc &quot;$(BootstrapperTsPath)&quot; $(TsCompilerFlags) --outFile &quot;$(OutputDirectory)app.js&quot;" />
+
+        <Delete Files="$(BootstrapperTsPath)" />
+    </Target>
+
+    <Target Name="BuildScss">
+        <Message Text="ScssFiles = @(ScssFiles)" />
+
+        <PropertyGroup>
+            <BootstrapperScssPath>$(SourceDirectory)bootstrapper.scss</BootstrapperScssPath>
+        </PropertyGroup>
+
+        <WriteLinesToFile
+            File="$(BootstrapperScssPath)"
+            Overwrite="true"
+            Lines="@(ScssFiles->'@import &quot;%(RecursiveDir)%(Filename)%(Extension)&quot;;')" />
+
+        <Exec Command="node-sass $(ScssCompilerFlags) &quot;$(BootstrapperScssPath)&quot; &quot;$(OutputDirectory)app.css&quot;" />
+
+        <Delete Files="$(BootstrapperScssPath)" />
+    </Target>
+
+    <Target Name="BuildHtml">
+        <Message Text="HtmlFiles = @(HtmlFiles)" />
+
+        <ItemGroup>
+            <HtmlFiles Condition="'%(HtmlFiles.Identity)' != ''">
+                <TemplateId>$([System.IO.Path]::GetFileNameWithoutExtension('%(HtmlFiles.Identity)'))_Template</TemplateId>
+                <FileContents>$([System.IO.File]::ReadAllText('%(HtmlFiles.Identity)'))</FileContents>
+            </HtmlFiles>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <HtmlTemplates Condition="'%(HtmlFiles.Identity)' != ''"><![CDATA[$(HtmlTemplates)
+<template id="%(HtmlFiles.TemplateId)">
+    %(HtmlFiles.FileContents)
+</template>
+]]></HtmlTemplates>
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <IndexHtml><![CDATA[
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="app.css" />
+    </head>
+    <body>
+        $(HtmlTemplates)
+        <myapp-app></myapp-app>
+        <script src="app.js"></script>
+    </body>
+</html>
+]]></IndexHtml>
+        </PropertyGroup>
+
+        <WriteLinesToFile
+            File="$(OutputDirectory)index.html"
+            Overwrite="true"
+            Lines="$(IndexHtml)" />
+    </Target>
+
+</Project>
