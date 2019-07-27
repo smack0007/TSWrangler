@@ -1,0 +1,16 @@
+<Project>
+    <PropertyGroup>
+        <NewLine>%0A%0D</NewLine>
+        <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
+        <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
+
+        <TsCompilerFlags>-t ES2015 -m None --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
+        <ScssCompilerFlags>--source-map true --output-style compressed</ScssCompilerFlags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <HtmlFiles Include="$(SourceDirectory)**/*.html" />
+        <ScssFiles Include="$(SourceDirectory)**/*.scss" Exclude="$(SourceDirectory)bootstrapper.scss" />
+        <TsFiles Include="$(SourceDirectory)**/*.ts" Exclude="$(SourceDirectory)bootstrapper.ts" />
+    </ItemGroup>
+</Project>

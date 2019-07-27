@@ -1,0 +1,4 @@
+<Project>
+    <Import Project="../../src/ChocolateTS.props" />
+    <Import Project="../../src/ChocolateTS.targets" />
+</Project>

@@ -1,20 +1,9 @@
-<Project DefaultTargets="Build">
-    <PropertyGroup>
-        <NewLine>%0A%0D</NewLine>
-        <SourceDirectory>$(MSBuildThisFileDirectory)src/</SourceDirectory>
-        <OutputDirectory>$(MSBuildThisFileDirectory)bin/</OutputDirectory>
+<Project DefaultTargets="Build">    
+    <Target Name="Build" DependsOnTargets="BuildDebugInfo;BuildTs;BuildScss;BuildHtml" />
 
-        <TsCompilerFlags>-t ES2015 -m None --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
-        <ScssCompilerFlags>--output-style compressed --source-map</ScssCompilerFlags>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <HtmlFiles Include="$(SourceDirectory)**/*.html" />
-        <ScssFiles Include="$(SourceDirectory)**/*.scss" />
-        <TsFiles Include="$(SourceDirectory)**/*.ts" />
-    </ItemGroup>
-    
-    <Target Name="Build" DependsOnTargets="BuildTs;BuildScss;BuildHtml" />
+    <Target Name="BuildDebugInfo">
+        <Message Text="ProjectDirectory = $(MSBuildProjectDirectory)" />
+    </Target>
 
     <Target Name="BuildTs">
         <Message Text="TsFiles = @(TsFiles)" />
@@ -49,9 +38,16 @@ customElements.define('myapp-app', MyApp.App);
             Overwrite="true"
             Lines="@(ScssFiles->'@import &quot;%(RecursiveDir)%(Filename)%(Extension)&quot;;')" />
 
-        <Exec Command="node-sass $(ScssCompilerFlags) &quot;$(BootstrapperScssPath)&quot; &quot;$(OutputDirectory)app.css&quot;" />
+        <Exec Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)bootstrapper.scss&quot;" ConsoleToMSBuild="true">
+            <Output TaskParameter="ConsoleOutput" PropertyName="ScssOutput" />
+        </Exec>
 
         <Delete Files="$(BootstrapperScssPath)" />
+
+        <WriteLinesToFile
+            File="$(OutputDirectory)app.css"
+            Overwrite="true"
+            Lines="$(ScssOutput)" />
     </Target>
 
     <Target Name="BuildHtml">
