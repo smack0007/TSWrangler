@@ -1,18 +1,50 @@
 <Project DefaultTargets="Build">    
-    <Target Name="Build" DependsOnTargets="BuildDebugInfo;BuildTs;BuildScss;BuildHtml" />
+    <PropertyGroup>
+        <NewLine>%0A%0D</NewLine>
+        
+        <ProjectNamespace Condition="$(ProjectNamespace) == ''">$(MSBuildProjectName)</ProjectNamespace>
+        
+        <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
+        <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
+        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(ProjectNamespace)</OutputFileNameWithoutExtension>
 
-    <Target Name="BuildDebugInfo">
+        <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
+        <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
+        
+        <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
+        <ScssMainPath Condition="$(ScssMainPath) == ''">main.scss</ScssMainPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <HtmlFiles Include="$(SourceDirectory)**/*.html" />
+    </ItemGroup>
+    
+    <Target Name="Build" DependsOnTargets="DebugInfo;BuildTs;BuildScss;BuildHtml" />
+
+    <Target Name="DebugInfo">
         <Message Text="ProjectDirectory = $(MSBuildProjectDirectory)" />
+        
+        <Message Text="ProjectNamespace = $(ProjectNamespace)" />
+        
+        <Message Text="SourceDirectory = $(SourceDirectory)" />
+        <Message Text="OutputDirectory = $(OutputDirectory)" />
+        <Message Text="OutputFileNameWithoutExtension = $(OutputFileNameWithoutExtension)" />
+
+        <Message Text="TsCompilerFlags = $(TsCompilerFlags)" />
+        <Message Text="TsMainPath = $(TsMainPath)" />
+        
+        <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
+        <Message Text="ScssMainPath = $(ScssMainPath)" />
     </Target>
 
     <Target Name="BuildTs">
         <Message Text="TsFiles = @(TsFiles)" />
         
         <PropertyGroup>
-            <BootstrapperTsPath>$(SourceDirectory)bootstrapper.ts</BootstrapperTsPath>
+            <BootstrapperTsPath>$(SourceDirectory)$(OutputFileNameWithoutExtension).ts</BootstrapperTsPath>
             <BootstraperTs><![CDATA[
-/// <reference path="App.ts" />
-customElements.define('myapp-app', MyApp.App);
+/// <reference path="$(TsMainPath)" />
+$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             ]]></BootstraperTs>
         </PropertyGroup>
 
@@ -21,31 +53,38 @@ customElements.define('myapp-app', MyApp.App);
             Overwrite="true"
             Lines="$(BootstraperTs)" />
 
-        <Exec Command="tsc &quot;$(BootstrapperTsPath)&quot; $(TsCompilerFlags) --outFile &quot;$(OutputDirectory)app.js&quot;" />
+        <Exec
+            Command="tsc &quot;$(BootstrapperTsPath)&quot; $(TsCompilerFlags) --outFile &quot;$(OutputDirectory)$(OutputFileNameWithoutExtension).js&quot;"
+            ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="TscExitCode" />
+        </Exec>
 
         <Delete Files="$(BootstrapperTsPath)" />
+
+        <Error
+            Condition="$(TscExitCode) != 0"
+            Text="tsc exited with code $(TscExitCode)." />
     </Target>
 
     <Target Name="BuildScss">
-        <Message Text="ScssFiles = @(ScssFiles)" />
-
         <PropertyGroup>
-            <BootstrapperScssPath>$(SourceDirectory)bootstrapper.scss</BootstrapperScssPath>
+            <BootstrapperScssPath>$(SourceDirectory)$(OutputFileNameWithoutExtension).scss</BootstrapperScssPath>
         </PropertyGroup>
 
-        <WriteLinesToFile
-            File="$(BootstrapperScssPath)"
-            Overwrite="true"
-            Lines="@(ScssFiles->'@import &quot;%(RecursiveDir)%(Filename)%(Extension)&quot;;')" />
-
-        <Exec Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)bootstrapper.scss&quot;" ConsoleToMSBuild="true">
+        <Exec
+            Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)$(ScssMainPath)&quot;"
+            ConsoleToMSBuild="true"
+            ContinueOnError="true">
             <Output TaskParameter="ConsoleOutput" PropertyName="ScssOutput" />
+            <Output TaskParameter="ExitCode" PropertyName="NodeSassExitCode" />
         </Exec>
 
-        <Delete Files="$(BootstrapperScssPath)" />
+        <Error
+            Condition="$(NodeSassExitCode) != 0"
+            Text="node-sass exited with code $(NodeSassExitCode)." />
 
         <WriteLinesToFile
-            File="$(OutputDirectory)app.css"
+            File="$(OutputDirectory)$(OutputFileNameWithoutExtension).css"
             Overwrite="true"
             Lines="$(ScssOutput)" />
     </Target>
@@ -55,7 +94,7 @@ customElements.define('myapp-app', MyApp.App);
 
         <ItemGroup>
             <HtmlFiles Condition="'%(HtmlFiles.Identity)' != ''">
-                <TemplateId>$([System.IO.Path]::GetFileNameWithoutExtension('%(HtmlFiles.Identity)'))_Template</TemplateId>
+                <TemplateId>$(ProjectNamespace)-$([System.IO.Path]::GetFileNameWithoutExtension('%(HtmlFiles.Identity)'))</TemplateId>
                 <FileContents>$([System.IO.File]::ReadAllText('%(HtmlFiles.Identity)'))</FileContents>
             </HtmlFiles>
         </ItemGroup>
@@ -73,12 +112,11 @@ customElements.define('myapp-app', MyApp.App);
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="app.css" />
+        <link rel="stylesheet" href="$(OutputFileNameWithoutExtension).css" />
     </head>
     <body>
         $(HtmlTemplates)
-        <myapp-app></myapp-app>
-        <script src="app.js"></script>
+        <script src="$(OutputFileNameWithoutExtension).js"></script>
     </body>
 </html>
 ]]></IndexHtml>
