@@ -1,7 +1,15 @@
 <Project DefaultTargets="Build">    
+    <UsingTask
+        Condition="Exists('$(MSBuildThisFileDirectory)ResolveHtmlImports/bin/ResolveHtmlImports.dll')"
+        TaskName="ChocolateTS.ResolveHtmlImports"
+        AssemblyFile="$(MSBuildThisFileDirectory)ResolveHtmlImports/bin/ResolveHtmlImports.dll" />
+    
     <PropertyGroup>
         <NewLine>%0A%0D</NewLine>
         
+        <Verbosity Condition="$(Verbosity) == ''">n</Verbosity>
+        <VerbosityArgs>-v:$(Verbosity) -p:Verbosity=$(Verbosity)</VerbosityArgs>
+
         <ProjectNamespace Condition="$(ProjectNamespace) == ''">$(MSBuildProjectName)</ProjectNamespace>
         
         <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
@@ -17,8 +25,6 @@
         <HtmlMainPath>main.html</HtmlMainPath>
     </PropertyGroup>
     
-    <Target Name="Build" DependsOnTargets="DebugInfo;BuildTs;BuildScss;BuildHtml" />
-
     <Target Name="DebugInfo">
         <Message Text="ProjectDirectory = $(MSBuildProjectDirectory)" />
         
@@ -34,6 +40,23 @@
         <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
         <Message Text="ScssMainPath = $(ScssMainPath)" />
     </Target>
+
+    <Target Name="Build" DependsOnTargets="DebugInfo">
+        <Exec Command="dotnet msbuild -t:BuildTasks $(VerbosityArgs) &quot;$(MSBuildProjectFullPath)&quot;" />
+        <Exec Command="dotnet msbuild -t:BuildCore $(VerbosityArgs) -p:Verbosity=$(Verbosity) &quot;$(MSBuildProjectFullPath)&quot;" />
+    </Target>
+
+    <Target Name="BuildTasks">
+        <Exec
+            Command="dotnet restore"
+            WorkingDirectory="$(MSBuildThisFileDirectory)ResolveHtmlImports/" />
+        
+        <Exec
+            Command="dotnet build"
+            WorkingDirectory="$(MSBuildThisFileDirectory)ResolveHtmlImports/" />
+    </Target>
+
+    <Target Name="BuildCore" DependsOnTargets="BuildTs;BuildScss;BuildHtml" />
 
     <Target Name="BuildTs">
         <Message Text="TsFiles = @(TsFiles)" />
@@ -87,16 +110,11 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Lines="$(ScssOutput)" />
     </Target>
 
-    <Target Name="BuildHtml" DependsOnTargets="LoadMainHtml;ResolveHtmlImportsWhile;WriteHtmlOutput" />
+    <Target Name="BuildHtml">    
+        <ResolveHtmlImports MainPath="$(HtmlMainPath)" SourceDirectory="$(SourceDirectory)">
+            <Output TaskParameter="Output" PropertyName="HtmlOutput" />
+        </ResolveHtmlImports>
 
-    <Target Name="LoadMainHtml">
-        <PropertyGroup>
-            <HtmlInputPath>$(SourceDirectory)$(HtmlMainPath)</HtmlInputPath>
-            <HtmlOutput>$([System.IO.File]::ReadAllText('$(HtmlInputPath)'))</HtmlOutput>
-        </PropertyGroup>
-    </Target>
-        
-    <Target Name="WriteHtmlOutput">
         <PropertyGroup>
             <HtmlOutput><![CDATA[
 <!DOCTYPE html>
@@ -116,13 +134,6 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             File="$(OutputDirectory)index.html"
             Overwrite="true"
             Lines="$(HtmlOutput)" />
-    </Target>
-
-    <Target Name="ResolveHtmlImportsWhile">
-        <PropertyGroup>
-            <ResolveHtmlImportsWhile></ResolveHtmlImportsWhile>
-        </PropertyGroup>
-        <Message Text="HtmlOutput = $(HtmlOutput)" />
     </Target>
 
 </Project>
