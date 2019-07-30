@@ -25,7 +25,8 @@
     </PropertyGroup>
     
     <Target Name="DebugInfo">
-        <Message Text="ProjectDirectory = $(MSBuildProjectDirectory)" />
+        <Message Text="MSBuildToolsPath = $(MSBuildToolsPath)" />
+        <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" />
         
         <Message Text="ProjectNamespace = $(ProjectNamespace)" />
         
