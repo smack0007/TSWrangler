@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputPath>$(MSBuildThisFileDirectory)bin</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
@@ -8,4 +8,7 @@
     <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.0.461" />
   </ItemGroup>
+  <Target Name="CopyToParentDirectory" AfterTargets="CopyFilesToOutputDirectory">
+    <Copy SourceFiles="$(OutputPath)/ChocolateTS.Build.Tasks.dll" DestinationFolder="$(MSBuildThisFileDirectory)../" />
+  </Target>
 </Project>

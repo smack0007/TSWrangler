@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 
-namespace ChocolateTS
+namespace ChocolateTS.Build.Tasks
 {
     public class ResolveHtmlImports : Microsoft.Build.Utilities.Task
     {

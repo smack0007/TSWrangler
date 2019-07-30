@@ -1,8 +1,7 @@
 <Project DefaultTargets="Build">    
     <UsingTask
-        Condition="Exists('$(MSBuildThisFileDirectory)ResolveHtmlImports/bin/ResolveHtmlImports.dll')"
-        TaskName="ChocolateTS.ResolveHtmlImports"
-        AssemblyFile="$(MSBuildThisFileDirectory)ResolveHtmlImports/bin/ResolveHtmlImports.dll" />
+        TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports"
+        AssemblyFile="$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll" />
     
     <PropertyGroup>
         <NewLine>%0A%0D</NewLine>
@@ -41,26 +40,9 @@
         <Message Text="ScssMainPath = $(ScssMainPath)" />
     </Target>
 
-    <Target Name="Build" DependsOnTargets="DebugInfo">
-        <Exec Command="dotnet msbuild -t:BuildTasks $(VerbosityArgs) &quot;$(MSBuildProjectFullPath)&quot;" />
-        <Exec Command="dotnet msbuild -t:BuildCore $(VerbosityArgs) -p:Verbosity=$(Verbosity) &quot;$(MSBuildProjectFullPath)&quot;" />
-    </Target>
+    <Target Name="Build" DependsOnTargets="DebugInfo;BuildTs;BuildScss;BuildHtml" />
 
-    <Target Name="BuildTasks">
-        <Exec
-            Command="dotnet restore"
-            WorkingDirectory="$(MSBuildThisFileDirectory)ResolveHtmlImports/" />
-        
-        <Exec
-            Command="dotnet build"
-            WorkingDirectory="$(MSBuildThisFileDirectory)ResolveHtmlImports/" />
-    </Target>
-
-    <Target Name="BuildCore" DependsOnTargets="BuildTs;BuildScss;BuildHtml" />
-
-    <Target Name="BuildTs">
-        <Message Text="TsFiles = @(TsFiles)" />
-        
+    <Target Name="BuildTs">        
         <PropertyGroup>
             <BootstrapperTsPath>$(SourceDirectory)$(OutputFileNameWithoutExtension).ts</BootstrapperTsPath>
             <BootstraperTs><![CDATA[
