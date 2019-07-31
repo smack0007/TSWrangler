@@ -2,3 +2,6 @@
 bin/
 obj/
 node_modules/
+
+# nwjs is too big
+ext/nwjs/

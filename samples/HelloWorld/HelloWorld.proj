@@ -1,3 +1,9 @@
 <Project>
+    <PropertyGroup>
+        <OutputType>Nwjs</OutputType>
+        <!-- Temporary until I get Directory.Build.props working properly. -->
+        <NwjsRootDirectory>../../ext/nwjs/</NwjsRootDirectory>
+    </PropertyGroup>
+
     <Import Project="../../src/ChocolateTS.targets" />
 </Project>

@@ -9,11 +9,12 @@
         <Verbosity Condition="$(Verbosity) == ''">n</Verbosity>
         <VerbosityArgs>-v:$(Verbosity) -p:Verbosity=$(Verbosity)</VerbosityArgs>
 
-        <ProjectNamespace Condition="$(ProjectNamespace) == ''">$(MSBuildProjectName)</ProjectNamespace>
+        <!-- OutputType currently supports 'Web', 'Nwjs' -->
+        <OutputType Condition="$(OutputType) == ''">Web</OutputType>
         
         <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
         <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
-        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(ProjectNamespace)</OutputFileNameWithoutExtension>
+        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
 
         <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
         <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
@@ -22,13 +23,15 @@
         <ScssMainPath Condition="$(ScssMainPath) == ''">main.scss</ScssMainPath>
 
         <HtmlMainPath>main.html</HtmlMainPath>
+
+        <!-- Nwjs -->
+        <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>
+        <NwjsManifestPath Condition="$(NwjsManifestPath) == ''">nwjs.json</NwjsManifestPath>
     </PropertyGroup>
     
     <Target Name="DebugInfo">
         <Message Text="MSBuildToolsPath = $(MSBuildToolsPath)" />
         <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" />
-        
-        <Message Text="ProjectNamespace = $(ProjectNamespace)" />
         
         <Message Text="SourceDirectory = $(SourceDirectory)" />
         <Message Text="OutputDirectory = $(OutputDirectory)" />
@@ -39,9 +42,21 @@
         
         <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
         <Message Text="ScssMainPath = $(ScssMainPath)" />
+
+        <Message Text="NwjsRootDirectory = $(NwjsRootDirectory)" />
+        <Message Text="NwjsManifestPath = $(NwjsManifestPath)" />
     </Target>
 
-    <Target Name="Build" DependsOnTargets="DebugInfo;BuildTs;BuildScss;BuildHtml" />
+    <!--
+    Build
+    -->
+
+    <PropertyGroup>
+        <BuildDependencies>BuildTs;BuildScss;BuildHtml</BuildDependencies>
+        <BuildDependencies Condition="$(OutputType) == 'Nwjs'">CopyNwjsManifest</BuildDependencies>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
 
     <Target Name="BuildTs">        
         <PropertyGroup>
@@ -119,4 +134,19 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Lines="$(HtmlOutput)" />
     </Target>
 
+    <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">
+        <Copy SourceFiles="$(SourceDirectory)$(NwjsManifestPath)" DestinationFiles="$(OutputDirectory)package.json" />
+    </Target>
+
+    <!--
+    Run
+    -->
+
+    <Target Name="Run">
+        <!-- TODO: Need to find a way to determine current platform. -->
+        <Exec
+            Condition="$(OutputType) == 'nwjs'"
+            WorkingDirectory="$(MSBuildProjectDirectory)"
+            Command="&quot;$(NwjsRootDirectory)win-x64/nw&quot; &quot;$(OutputDirectory)&quot;" />
+    </Target>
 </Project>
