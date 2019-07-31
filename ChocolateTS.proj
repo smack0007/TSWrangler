@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup>
+        <HelloWorldProject>samples/HelloWorld/HelloWorld.proj</HelloWorldProject>
+    </PropertyGroup>
+
+    <!--
+    Build
+    -->
+
+    <Target Name="Build" DependsOnTargets="BuildHelloWorld" />
+    
+    <Target Name="BuildHelloWorld">
+        <MSBuild Projects="$(HelloWorldProject)" Targets="Build" />
+    </Target>
+
+    <!--
+    Run
+    -->
+
+    <Target Name="RunHelloWorld">
+        <MSBuild Projects="$(HelloWorldProject)" Targets="Run" />
+    </Target>
+</Project>

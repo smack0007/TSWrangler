@@ -1,0 +1,55 @@
+<Project>
+    <PropertyGroup>
+        <DirectoryBuildPropsFile>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildProjectDirectory)'))</DirectoryBuildPropsFile>
+    </PropertyGroup>
+
+    <Import
+        Condition="$(DirectoryBuildPropsFile) != ''"
+        Project="$(DirectoryBuildPropsFile)" />
+
+    <PropertyGroup>
+        <!-- Constants -->
+        <NewLine>%0A%0D</NewLine>
+        
+        <!-- General -->
+        <Verbosity Condition="$(Verbosity) == ''">n</Verbosity>
+        <VerbosityArgs>-v:$(Verbosity) -p:Verbosity=$(Verbosity)</VerbosityArgs>
+
+        <!-- OutputType currently supports 'Web', 'Nwjs' -->
+        <OutputType Condition="$(OutputType) == ''">Web</OutputType>
+        
+        <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
+        <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
+        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
+
+        <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
+        <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
+        
+        <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
+        <ScssMainPath Condition="$(ScssMainPath) == ''">main.scss</ScssMainPath>
+
+        <HtmlMainPath>main.html</HtmlMainPath>
+
+        <!-- Nwjs -->
+        <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>
+        <NwjsManifestPath Condition="$(NwjsManifestPath) == ''">nwjs.json</NwjsManifestPath>
+    </PropertyGroup>
+
+    <Target Name="DebugInfo">
+        <Message Text="MSBuildToolsPath = $(MSBuildToolsPath)" />
+        <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" />
+        
+        <Message Text="SourceDirectory = $(SourceDirectory)" />
+        <Message Text="OutputDirectory = $(OutputDirectory)" />
+        <Message Text="OutputFileNameWithoutExtension = $(OutputFileNameWithoutExtension)" />
+
+        <Message Text="TsCompilerFlags = $(TsCompilerFlags)" />
+        <Message Text="TsMainPath = $(TsMainPath)" />
+        
+        <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
+        <Message Text="ScssMainPath = $(ScssMainPath)" />
+
+        <Message Text="NwjsRootDirectory = $(NwjsRootDirectory)" />
+        <Message Text="NwjsManifestPath = $(NwjsManifestPath)" />
+    </Target>
+</Project>

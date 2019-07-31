@@ -3,49 +3,7 @@
         TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports"
         AssemblyFile="$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll" />
     
-    <PropertyGroup>
-        <NewLine>%0A%0D</NewLine>
-        
-        <Verbosity Condition="$(Verbosity) == ''">n</Verbosity>
-        <VerbosityArgs>-v:$(Verbosity) -p:Verbosity=$(Verbosity)</VerbosityArgs>
-
-        <!-- OutputType currently supports 'Web', 'Nwjs' -->
-        <OutputType Condition="$(OutputType) == ''">Web</OutputType>
-        
-        <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
-        <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
-        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
-
-        <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
-        <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
-        
-        <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
-        <ScssMainPath Condition="$(ScssMainPath) == ''">main.scss</ScssMainPath>
-
-        <HtmlMainPath>main.html</HtmlMainPath>
-
-        <!-- Nwjs -->
-        <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>
-        <NwjsManifestPath Condition="$(NwjsManifestPath) == ''">nwjs.json</NwjsManifestPath>
-    </PropertyGroup>
     
-    <Target Name="DebugInfo">
-        <Message Text="MSBuildToolsPath = $(MSBuildToolsPath)" />
-        <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" />
-        
-        <Message Text="SourceDirectory = $(SourceDirectory)" />
-        <Message Text="OutputDirectory = $(OutputDirectory)" />
-        <Message Text="OutputFileNameWithoutExtension = $(OutputFileNameWithoutExtension)" />
-
-        <Message Text="TsCompilerFlags = $(TsCompilerFlags)" />
-        <Message Text="TsMainPath = $(TsMainPath)" />
-        
-        <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
-        <Message Text="ScssMainPath = $(ScssMainPath)" />
-
-        <Message Text="NwjsRootDirectory = $(NwjsRootDirectory)" />
-        <Message Text="NwjsManifestPath = $(NwjsManifestPath)" />
-    </Target>
 
     <!--
     Build
@@ -53,7 +11,7 @@
 
     <PropertyGroup>
         <BuildDependencies>BuildTs;BuildScss;BuildHtml</BuildDependencies>
-        <BuildDependencies Condition="$(OutputType) == 'Nwjs'">CopyNwjsManifest</BuildDependencies>
+        <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
 
     <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
@@ -149,4 +107,12 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             WorkingDirectory="$(MSBuildProjectDirectory)"
             Command="&quot;$(NwjsRootDirectory)win-x64/nw&quot; &quot;$(OutputDirectory)&quot;" />
     </Target>
+
+    <PropertyGroup>
+        <DirectoryBuildTargetsFile>$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildProjectDirectory)'))</DirectoryBuildTargetsFile>
+    </PropertyGroup>
+
+    <Import
+        Condition="$(DirectoryBuildTargetsFile) != ''"
+        Project="$(DirectoryBuildTargetsFile)" />
 </Project>
