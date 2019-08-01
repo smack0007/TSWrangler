@@ -5,7 +5,7 @@ using Microsoft.Build.Framework;
 
 namespace ChocolateTS.Build.Tasks
 {
-    public class ResolveHtmlImports : Microsoft.Build.Utilities.Task
+    public class ResolveScssImports : Microsoft.Build.Utilities.Task
     {
         [Required]
         public string EntryPointPath { get; set; }
@@ -21,7 +21,7 @@ namespace ChocolateTS.Build.Tasks
             LogMessage($"{nameof(EntryPointPath)} = {EntryPointPath}");
             LogMessage($"{nameof(SourceDirectory)} = {SourceDirectory}");            
 
-            Output = LoadHtml(EntryPointPath);
+            Output = LoadScss(EntryPointPath);
 
             return true;
         }
@@ -31,23 +31,24 @@ namespace ChocolateTS.Build.Tasks
             Log.LogMessage(MessageImportance.Normal, message);
         }
 
-        private string LoadHtml(string path)
+        private string LoadScss(string path)
         {
             var directory = Path.GetDirectoryName(path);
             var fullPath = System.IO.Path.Combine(SourceDirectory, path);
             LogMessage($"Loading \"{fullPath}\"");
-            var html = File.ReadAllText(fullPath);
+            var scss = File.ReadAllText(fullPath);
 
-            html = Regex.Replace(html, @"\<import(\s+)src\=\""([\w, \/, \\, \.]+)\""\>(.*)\<\/import\>", (match) => {
-                return 
-                    $"<!-- Begin: \"{match.Groups[2].Value}\" -->" +
+            scss = Regex.Replace(scss, @"\@import(\s+)\""([\w, \/, \\, \.]+)\"";", (match) => {
+                LogMessage($"Found \"{match.Groups[0].Value}\"");
+                return
+                    $"/* Begin: \"{match.Groups[2].Value}\" */" +
                     Environment.NewLine +
-                    LoadHtml(Path.Combine(directory, match.Groups[2].Value)) +
+                    LoadScss(Path.Combine(directory, match.Groups[2].Value)) +
                     Environment.NewLine +
-                    $"<!-- End: \"{match.Groups[2].Value}\" -->";
+                    $"/* End: \"{match.Groups[2].Value}\" */";
             });
 
-            return html;
+            return scss;
         }
     }
 }

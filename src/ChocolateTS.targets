@@ -1,7 +1,10 @@
 <Project DefaultTargets="Build">    
-    <UsingTask
-        TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports"
-        AssemblyFile="$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll" />
+    <PropertyGroup>
+        <ChocolateMSBuildTasksAssemblyFile>$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll</ChocolateMSBuildTasksAssemblyFile>
+    </PropertyGroup>
+
+    <UsingTask TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
+    <UsingTask TaskName="ChocolateTS.Build.Tasks.ResolveScssImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
     
     <ItemGroup>
         <!-- Add default SCSS entry point. -->
@@ -61,13 +64,31 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Text="Scss entry point '$(SourceDirectory)%(ScssEntryPoints.Identity)' does not exist." />
 
         <ItemGroup>
-            <HtmlEntryPoints Condition="%(ScssEntryPoints.OutputPath) == ''">
+            <ScssEntryPoints Condition="%(ScssEntryPoints.OutputPath) == ''">
                 <OutputPath>%(ScssEntryPoints.RelativeDir)%(ScssEntryPoints.FileName).css</OutputPath>
-            </HtmlEntryPoints>
+            </ScssEntryPoints>
         </ItemGroup>
 
+        <PropertyGroup>
+            <_ScssIntermediateOutputPath>$(IntermediateOutputDirectory)%(ScssEntryPoints.RelativeDir)%(ScssEntryPoints.FileName).scss</_ScssIntermediateOutputPath>
+            <_ScssOutputPath>$(OutputDirectory)%(ScssEntryPoints.OutputPath)</_ScssOutputPath>
+        </PropertyGroup>
+
+        <ResolveScssImports EntryPointPath="%(ScssEntryPoints.Identity)" SourceDirectory="$(SourceDirectory)">
+            <Output TaskParameter="Output" PropertyName="_ScssOutput" />
+        </ResolveScssImports>
+
+        <Message Text="Writing &quot;$(_ScssIntermediateOutputPath)&quot;" />
+
+        <WriteLinesToFile
+            File="$(_ScssIntermediateOutputPath)"
+            Overwrite="true"
+            Lines="$(_ScssOutput)" />
+
+        <Message Text="Executing 'node-sass $(ScssCompilerFlags) &quot;$(_ScssIntermediateOutputPath)&quot;'" />
+
         <Exec
-            Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)%(ScssEntryPoints.Identity)&quot;"
+            Command="node-sass $(ScssCompilerFlags) &quot;$(_ScssIntermediateOutputPath)&quot;"
             ConsoleToMSBuild="true"
             EchoOff="true"
             ContinueOnError="true">
@@ -79,10 +100,10 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Condition="$(_NodeSassExitCode) != 0"
             Text="node-sass exited with code $(_NodeSassExitCode)." />
 
-        <Message Text="Writing &quot;$(OutputDirectory)%(ScssEntryPoints.OutputPath)&quot;" />
+        <Message Text="Writing &quot;$(_ScssOutputPath)&quot;" />
 
         <WriteLinesToFile
-            File="$(OutputDirectory)%(ScssEntryPoints.OutputPath)"
+            File="$(_ScssOutputPath)"
             Overwrite="true"
             Lines="$(_ScssOutput)" />
     </Target>

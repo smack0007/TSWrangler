@@ -1,3 +1,5 @@
 body {
-    color: red;
+    color: black;
+
+    @import "greet/greet.scss";
 }

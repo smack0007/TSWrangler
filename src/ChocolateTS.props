@@ -22,6 +22,7 @@
         
         <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
         <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
+        <IntermediateOutputDirectory Condition="$(IntermediateOutputDirectory) == ''">./obj/</IntermediateOutputDirectory>
         <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
 
         <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
@@ -43,6 +44,7 @@
         
         <Message Text="SourceDirectory = $(SourceDirectory)" />
         <Message Text="OutputDirectory = $(OutputDirectory)" />
+        <Message Text="IntermediateOutputDirectory = $(IntermediateOutputDirectory)" />
         <Message Text="OutputFileNameWithoutExtension = $(OutputFileNameWithoutExtension)" />
 
         <Message Text="TsCompilerFlags = $(TsCompilerFlags)" />
