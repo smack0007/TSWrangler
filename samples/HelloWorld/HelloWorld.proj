@@ -7,9 +7,5 @@
         <NwjsRootDirectory>$(RepositoryRootDirectory)ext/nwjs/</NwjsRootDirectory>
     </PropertyGroup>
 
-    <ItemGroup>
-        <HtmlEntryPoints Include="main.html" OutputPath="index.html" />
-    </ItemGroup>
-
     <Import Project="../../src/ChocolateTS.targets" />
 </Project>

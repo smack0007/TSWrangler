@@ -29,9 +29,6 @@
         <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
         
         <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
-        <ScssMainPath Condition="$(ScssMainPath) == ''">main.scss</ScssMainPath>
-
-        <HtmlMainPath>main.html</HtmlMainPath>
 
         <!-- Nwjs -->
         <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>
@@ -42,6 +39,8 @@
         <Message Text="MSBuildToolsPath = $(MSBuildToolsPath)" />
         <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" />
         
+        <Message Text="Configuration = $(Configuration)" />
+
         <Message Text="SourceDirectory = $(SourceDirectory)" />
         <Message Text="OutputDirectory = $(OutputDirectory)" />
         <Message Text="IntermediateOutputDirectory = $(IntermediateOutputDirectory)" />
@@ -51,7 +50,6 @@
         <Message Text="TsMainPath = $(TsMainPath)" />
         
         <Message Text="ScssCompilerFlags = $(ScssCompilerFlags)" />
-        <Message Text="ScssMainPath = $(ScssMainPath)" />
 
         <Message Text="NwjsRootDirectory = $(NwjsRootDirectory)" />
         <Message Text="NwjsManifestPath = $(NwjsManifestPath)" />
