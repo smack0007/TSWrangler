@@ -1,6 +1,6 @@
 # ChocolateTS
 
-<img align="right" width="160px" height="160px" src="assets/logo.png">
+<img align="right" width="160px" height="160px" src="https://github.com/smack0007/ChocolateTS/raw/master/assets/Logo.png">
 
 ## Credits
 
