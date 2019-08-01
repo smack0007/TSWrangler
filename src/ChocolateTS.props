@@ -25,10 +25,15 @@
         <IntermediateOutputDirectory Condition="$(IntermediateOutputDirectory) == ''">./obj/</IntermediateOutputDirectory>
         <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
 
+        <CopyChocolateTSLibToOutput Condition="$(CopyChocolateTSLibToOutput) == ''">true</CopyChocolateTSLibToOutput>
+
         <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
         <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>
         
         <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
+
+        <!-- Serve -->
+        <ServePort>8080</ServePort>
 
         <!-- Nwjs -->
         <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>

@@ -1,6 +1,5 @@
-export function greet(name: string): HTMLElement {
-    var greetTemplate = document.getElementById('HelloWorld-greet') as HTMLTemplateElement;
-    var node = greetTemplate.content.cloneNode(true) as HTMLElement;
-    console.dir(node);
-    return node;
+export function greet(name: string): Node {
+    var greetTemplate = document.getElementById('greetingTemplate') as HTMLTemplateElement;
+    (greetTemplate.content.querySelector('.name') as HTMLElement).innerText = name;
+    return greetTemplate.content.cloneNode(true);
 }

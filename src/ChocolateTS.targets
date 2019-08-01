@@ -26,32 +26,24 @@
 
     <PropertyGroup>
         <BuildDependencies>BuildTs;BuildScss;BuildHtml</BuildDependencies>
+        <BuildDependencies Condition="$(CopyChocolateTSLibToOutput)">$(BuildDependencies);CopyChocolateTSLib</BuildDependencies>
         <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
 
     <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
 
-    <Target Name="BuildTs">        
+    <Target Name="BuildTs">
         <PropertyGroup>
-            <BootstrapperTsPath>$(SourceDirectory)$(OutputFileNameWithoutExtension).ts</BootstrapperTsPath>
-            <BootstraperTs><![CDATA[
-/// <reference path="$(TsMainPath)" />
-$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
-            ]]></BootstraperTs>
+            <_TsOutputPath>$(OutputDirectory)$(OutputFileNameWithoutExtension).js</_TsOutputPath>
         </PropertyGroup>
 
-        <WriteLinesToFile
-            File="$(BootstrapperTsPath)"
-            Overwrite="true"
-            Lines="$(BootstraperTs)" />
+        <Message Text="Executing 'tsc &quot;$(SourceDirectory)$(TsMainPath)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;'" />
 
         <Exec
-            Command="tsc &quot;$(BootstrapperTsPath)&quot; $(TsCompilerFlags) --outFile &quot;$(OutputDirectory)$(OutputFileNameWithoutExtension).js&quot;"
+            Command="tsc &quot;$(SourceDirectory)$(TsMainPath)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;"
             ContinueOnError="true">
             <Output TaskParameter="ExitCode" PropertyName="TscExitCode" />
         </Exec>
-
-        <Delete Files="$(BootstrapperTsPath)" />
 
         <Error
             Condition="$(TscExitCode) != 0"
@@ -131,6 +123,10 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Lines="$(_HtmlOutput)" />
     </Target>
 
+    <Target Name="CopyChocolateTSLib" Inputs="$(MSBuildThisFileDirectory)ChocolateTS.js" Outputs="$(OutputDirectory)ChocolateTS.js">
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)ChocolateTS.js" DestinationFiles="$(OutputDirectory)ChocolateTS.js" />
+    </Target>
+
     <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">
         <Copy SourceFiles="$(SourceDirectory)$(NwjsManifestPath)" DestinationFiles="$(OutputDirectory)package.json" />
     </Target>
@@ -146,6 +142,20 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             WorkingDirectory="$(MSBuildProjectDirectory)"
             Command="&quot;$(NwjsRootDirectory)win-x64/nw&quot; &quot;$(OutputDirectory)&quot;" />
     </Target>
+
+    <!--
+    Serve
+    -->
+
+    <Target Name="Serve">
+        <Exec
+            WorkingDirectory="$(MSBuildProjectDirectory)"
+            Command="dotnet serve -d &quot;$(OutputDirectory)&quot; -p $(ServePort)" />
+    </Target>
+
+    <!--
+    Directory.Build.targets
+    -->
 
     <PropertyGroup>
         <DirectoryBuildTargetsFile>$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildProjectDirectory)'))</DirectoryBuildTargetsFile>

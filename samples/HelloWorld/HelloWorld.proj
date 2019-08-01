@@ -2,7 +2,10 @@
     <Import Project="../../src/ChocolateTS.props" />
     
     <PropertyGroup>
+        <ServePort>4567</ServePort>
+
         <OutputType>Nwjs</OutputType>
+
         <!-- Temporary until I get Directory.Build.props working properly. -->
         <NwjsRootDirectory>$(RepositoryRootDirectory)ext/nwjs/</NwjsRootDirectory>
     </PropertyGroup>

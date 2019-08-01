@@ -16,8 +16,14 @@
     Build
     -->
 
-    <Target Name="Build" DependsOnTargets="BuildHelloWorld" />
+    <Target Name="Build" DependsOnTargets="BuildChocolateTSLib;BuildHelloWorld" />
     
+    <Target Name="BuildChocolateTSLib" Inputs="./src/ChocolateTS.ts" Outputs="./src/ChocolateTS.js">
+        <Exec
+            Command="tsc ChocolateTS.ts"
+            WorkingDirectory="./src/" />
+    </Target>
+
     <Target Name="BuildHelloWorld">
         <MSBuild Projects="$(HelloWorldProject)" Targets="Build" />
     </Target>
@@ -28,5 +34,13 @@
 
     <Target Name="RunHelloWorld">
         <MSBuild Projects="$(HelloWorldProject)" Targets="Run" />
+    </Target>
+
+    <!--
+    Run
+    -->
+
+    <Target Name="ServeHelloWorld">
+        <MSBuild Projects="$(HelloWorldProject)" Targets="Serve" />
     </Target>
 </Project>
