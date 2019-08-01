@@ -3,7 +3,13 @@
         TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports"
         AssemblyFile="$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll" />
     
-    
+    <ItemGroup>
+        <!-- Add default HTML entry point. -->
+        <HtmlEntryPoints
+            Condition="'@(HtmlEntryPoints)' == ''"
+            Include="main.html"
+            OutputPath="index.html" />
+    </ItemGroup>
 
     <!--
     Build
@@ -66,30 +72,27 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Lines="$(ScssOutput)" />
     </Target>
 
-    <Target Name="BuildHtml">    
-        <ResolveHtmlImports MainPath="$(HtmlMainPath)" SourceDirectory="$(SourceDirectory)">
-            <Output TaskParameter="Output" PropertyName="HtmlOutput" />
+    <Target Name="BuildHtml" Outputs="%(HtmlEntryPoints.Identity)">        
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(HtmlEntryPoints.Identity)')"
+            Text="Html entry point '$(SourceDirectory)%(HtmlEntryPoints.Identity)' does not exist." />
+        
+        <ItemGroup>
+            <HtmlEntryPoints Condition="%(HtmlEntryPoints.OutputPath) == ''">
+                <OutputPath>%(HtmlEntryPoints.RelativeDir)%(HtmlEntryPoints.FileName)%(HtmlEntryPoints.Extension)</OutputPath>
+            </HtmlEntryPoints>
+        </ItemGroup>
+
+        <ResolveHtmlImports EntryPointPath="%(HtmlEntryPoints.Identity)" SourceDirectory="$(SourceDirectory)">
+            <Output TaskParameter="Output" PropertyName="_HtmlOutput" />
         </ResolveHtmlImports>
 
-        <PropertyGroup>
-            <HtmlOutput><![CDATA[
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="$(OutputFileNameWithoutExtension).css" />
-    </head>
-    <body>
-        $(HtmlOutput)
-        <script src="$(OutputFileNameWithoutExtension).js"></script>
-    </body>
-</html>
-]]></HtmlOutput>
-        </PropertyGroup>
+        <Message Text="Writing &quot;$(OutputDirectory)%(HtmlEntryPoints.OutputPath)&quot;" />
 
         <WriteLinesToFile
-            File="$(OutputDirectory)index.html"
+            File="$(OutputDirectory)%(HtmlEntryPoints.OutputPath)"
             Overwrite="true"
-            Lines="$(HtmlOutput)" />
+            Lines="$(_HtmlOutput)" />
     </Target>
 
     <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">

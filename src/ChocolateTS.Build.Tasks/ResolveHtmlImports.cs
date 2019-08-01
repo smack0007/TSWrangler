@@ -9,7 +9,7 @@ namespace ChocolateTS.Build.Tasks
     public class ResolveHtmlImports : Microsoft.Build.Utilities.Task
     {
         [Required]
-        public string MainPath { get; set; }
+        public string EntryPointPath { get; set; }
 
         [Required]
         public string SourceDirectory { get; set; }
@@ -19,10 +19,10 @@ namespace ChocolateTS.Build.Tasks
 
         public override bool Execute()
         {
-            LogMessage($"{nameof(MainPath)} = {MainPath}");
+            LogMessage($"{nameof(EntryPointPath)} = {EntryPointPath}");
             LogMessage($"{nameof(SourceDirectory)} = {SourceDirectory}");            
 
-            Output = LoadHtml(MainPath);
+            Output = LoadHtml(EntryPointPath);
 
             return true;
         }
@@ -40,7 +40,12 @@ namespace ChocolateTS.Build.Tasks
             var html = File.ReadAllText(fullPath);
 
             html = Regex.Replace(html, @"\<import(\s+)src\=\""([\w, \/, \\, \.]+)\""\>(.*)\<\/import\>", (match) => {
-                return LoadHtml(Path.Combine(directory, match.Groups[2].Value));
+                return 
+                    $"<!-- Begin: \"{match.Groups[2].Value}\" -->" +
+                    Environment.NewLine +
+                    LoadHtml(Path.Combine(directory, match.Groups[2].Value)) +
+                    Environment.NewLine +
+                    $"<!-- End: \"{match.Groups[2].Value}\" -->";
             });
 
             return html;
