@@ -4,6 +4,12 @@
         AssemblyFile="$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll" />
     
     <ItemGroup>
+        <!-- Add default SCSS entry point. -->
+        <ScssEntryPoints
+            Condition="@(ScssEntryPoints) == ''"
+            Include="main.scss"
+            OutputPath="$(MSBuildProjectName).css" />
+        
         <!-- Add default HTML entry point. -->
         <HtmlEntryPoints
             Condition="'@(HtmlEntryPoints)' == ''"
@@ -49,27 +55,36 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
             Text="tsc exited with code $(TscExitCode)." />
     </Target>
 
-    <Target Name="BuildScss">
-        <PropertyGroup>
-            <BootstrapperScssPath>$(SourceDirectory)$(OutputFileNameWithoutExtension).scss</BootstrapperScssPath>
-        </PropertyGroup>
+    <Target Name="BuildScss" Outputs="%(ScssEntryPoints.Identity)">
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(ScssEntryPoints.Identity)')"
+            Text="Scss entry point '$(SourceDirectory)%(ScssEntryPoints.Identity)' does not exist." />
+
+        <ItemGroup>
+            <HtmlEntryPoints Condition="%(ScssEntryPoints.OutputPath) == ''">
+                <OutputPath>%(ScssEntryPoints.RelativeDir)%(ScssEntryPoints.FileName).css</OutputPath>
+            </HtmlEntryPoints>
+        </ItemGroup>
 
         <Exec
-            Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)$(ScssMainPath)&quot;"
+            Command="node-sass $(ScssCompilerFlags) &quot;$(SourceDirectory)%(ScssEntryPoints.Identity)&quot;"
             ConsoleToMSBuild="true"
+            EchoOff="true"
             ContinueOnError="true">
-            <Output TaskParameter="ConsoleOutput" PropertyName="ScssOutput" />
-            <Output TaskParameter="ExitCode" PropertyName="NodeSassExitCode" />
+            <Output TaskParameter="ConsoleOutput" PropertyName="_ScssOutput" />
+            <Output TaskParameter="ExitCode" PropertyName="_NodeSassExitCode" />
         </Exec>
 
         <Error
-            Condition="$(NodeSassExitCode) != 0"
-            Text="node-sass exited with code $(NodeSassExitCode)." />
+            Condition="$(_NodeSassExitCode) != 0"
+            Text="node-sass exited with code $(_NodeSassExitCode)." />
+
+        <Message Text="Writing &quot;$(OutputDirectory)%(ScssEntryPoints.OutputPath)&quot;" />
 
         <WriteLinesToFile
-            File="$(OutputDirectory)$(OutputFileNameWithoutExtension).css"
+            File="$(OutputDirectory)%(ScssEntryPoints.OutputPath)"
             Overwrite="true"
-            Lines="$(ScssOutput)" />
+            Lines="$(_ScssOutput)" />
     </Target>
 
     <Target Name="BuildHtml" Outputs="%(HtmlEntryPoints.Identity)">        
@@ -79,7 +94,7 @@ $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)ChocolateTS.ts'))
         
         <ItemGroup>
             <HtmlEntryPoints Condition="%(HtmlEntryPoints.OutputPath) == ''">
-                <OutputPath>%(HtmlEntryPoints.RelativeDir)%(HtmlEntryPoints.FileName)%(HtmlEntryPoints.Extension)</OutputPath>
+                <OutputPath>%(HtmlEntryPoints.RelativeDir)%(HtmlEntryPoints.FileName).html</OutputPath>
             </HtmlEntryPoints>
         </ItemGroup>
 

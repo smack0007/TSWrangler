@@ -15,6 +15,8 @@
         <Verbosity Condition="$(Verbosity) == ''">n</Verbosity>
         <VerbosityArgs>-v:$(Verbosity) -p:Verbosity=$(Verbosity)</VerbosityArgs>
 
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+
         <!-- OutputType currently supports 'Web', 'Nwjs' -->
         <OutputType Condition="$(OutputType) == ''">Web</OutputType>
         

@@ -1,7 +1,6 @@
 
 <Project>
     <PropertyGroup>
-        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
     </PropertyGroup>
 </Project>
