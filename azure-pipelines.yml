@@ -8,5 +8,7 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'dotnet msbuild'
   inputs:
+    command: 'custom'
+    custom: 'msbuild'
     projects: ChocolateTS.proj
     arguments: '-v:n -t:Setup;Build -p:Configuration=Release'
