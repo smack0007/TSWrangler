@@ -32,12 +32,12 @@
         
         <ScssCompilerFlags>--output-style compressed</ScssCompilerFlags>
 
-        <!-- Serve -->
-        <ServePort>8080</ServePort>
-
         <!-- Nwjs -->
         <NwjsRootDirectory Condition="$(NwjsRootDirectory) == ''">$(MSBuildProjectDirectory)ext/nwjs/</NwjsRootDirectory>
         <NwjsManifestPath Condition="$(NwjsManifestPath) == ''">nwjs.json</NwjsManifestPath>
+
+        <!-- Serve -->
+        <ServePort>8080</ServePort>
     </PropertyGroup>
 
     <Target Name="DebugInfo">

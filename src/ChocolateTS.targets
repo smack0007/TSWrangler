@@ -8,6 +8,12 @@
     
     <ItemGroup>
         <!-- Add default SCSS entry point. -->
+        <TsEntryPoints
+            Condition="@(TsEntryPoints) == ''"
+            Include="main.ts"
+            OutputPath="$(MSBuildProjectName).js" />
+        
+        <!-- Add default SCSS entry point. -->
         <ScssEntryPoints
             Condition="@(ScssEntryPoints) == ''"
             Include="main.scss"
@@ -32,22 +38,30 @@
 
     <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
 
-    <Target Name="BuildTs">
+    <Target Name="BuildTs" Outputs="%(TsEntryPoints.Identity)">
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(TsEntryPoints.Identity)')"
+            Text="Scss entry point '$(SourceDirectory)%(TsEntryPoints.Identity)' does not exist." />
+        
+        <ItemGroup>
+            <TsEntryPoints Condition="%(TsEntryPoints.OutputPath) == ''">
+                <OutputPath>%(TsEntryPoints.RelativeDir)%(TsEntryPoints.FileName).js</OutputPath>
+            </TsEntryPoints>
+        </ItemGroup>
+
         <PropertyGroup>
-            <_TsOutputPath>$(OutputDirectory)$(OutputFileNameWithoutExtension).js</_TsOutputPath>
+            <_TsOutputPath>$(OutputDirectory)%(TsEntryPoints.OutputPath)</_TsOutputPath>
         </PropertyGroup>
 
-        <Message Text="Executing 'tsc &quot;$(SourceDirectory)$(TsMainPath)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;'" />
-
         <Exec
-            Command="tsc &quot;$(SourceDirectory)$(TsMainPath)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;"
+            Command="tsc &quot;$(SourceDirectory)%(TsEntryPoints.Identity)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;"
             ContinueOnError="true">
-            <Output TaskParameter="ExitCode" PropertyName="TscExitCode" />
+            <Output TaskParameter="ExitCode" PropertyName="_TscExitCode" />
         </Exec>
 
         <Error
-            Condition="$(TscExitCode) != 0"
-            Text="tsc exited with code $(TscExitCode)." />
+            Condition="$(_TscExitCode) != 0"
+            Text="tsc exited with code $(_TscExitCode)." />
     </Target>
 
     <Target Name="BuildScss" Outputs="%(ScssEntryPoints.Identity)">
@@ -77,12 +91,9 @@
             Overwrite="true"
             Lines="$(_ScssOutput)" />
 
-        <Message Text="Executing 'node-sass $(ScssCompilerFlags) &quot;$(_ScssIntermediateOutputPath)&quot;'" />
-
         <Exec
             Command="node-sass $(ScssCompilerFlags) &quot;$(_ScssIntermediateOutputPath)&quot;"
             ConsoleToMSBuild="true"
-            EchoOff="true"
             ContinueOnError="true">
             <Output TaskParameter="ConsoleOutput" PropertyName="_ScssOutput" />
             <Output TaskParameter="ExitCode" PropertyName="_NodeSassExitCode" />
