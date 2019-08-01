@@ -23,7 +23,7 @@
         <SourceDirectory Condition="$(SourceDirectory) == ''">./src/</SourceDirectory>
         <OutputDirectory Condition="$(OutputDirectory) == ''">./bin/</OutputDirectory>
         <IntermediateOutputDirectory Condition="$(IntermediateOutputDirectory) == ''">./obj/</IntermediateOutputDirectory>
-        <OutputFileNameWithoutExtension Condition="$(OutputFileNameWithoutExtension) == ''">$(MSBuildProjectName)</OutputFileNameWithoutExtension>
+        <AssetsDirectory Condition="$(AssetsDirectory) == ''">./assets/</AssetsDirectory>
 
         <CopyChocolateTSLibToOutput Condition="$(CopyChocolateTSLibToOutput) == ''">true</CopyChocolateTSLibToOutput>
 

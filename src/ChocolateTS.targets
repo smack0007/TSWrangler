@@ -24,6 +24,10 @@
             Condition="'@(HtmlEntryPoints)' == ''"
             Include="main.html"
             OutputPath="index.html" />
+
+        <Assets
+            Condition="Exists('$(AssetsDirectory)')"
+            Include="$(AssetsDirectory)**/*" />
     </ItemGroup>
 
     <!--
@@ -31,7 +35,7 @@
     -->
 
     <PropertyGroup>
-        <BuildDependencies>BuildTs;BuildScss;BuildHtml</BuildDependencies>
+        <BuildDependencies>BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
         <BuildDependencies Condition="$(CopyChocolateTSLibToOutput)">$(BuildDependencies);CopyChocolateTSLib</BuildDependencies>
         <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
@@ -132,6 +136,16 @@
             File="$(OutputDirectory)%(HtmlEntryPoints.OutputPath)"
             Overwrite="true"
             Lines="$(_HtmlOutput)" />
+    </Target>
+
+    <Target Name="CopyAssets" Outputs="%(Assets.Identity)">
+        <ItemGroup>
+            <Assets Condition="%(Assets.OutputPath) == ''">
+                <OutputPath>%(Assets.RelativeDir)%(Assets.FileName)%(Assets.Extension)</OutputPath>
+            </Assets>
+        </ItemGroup>
+        
+        <Copy SourceFiles="%(Assets.Identity)" DestinationFiles="$(OutputDirectory)%(Assets.OutputPath)" />
     </Target>
 
     <Target Name="CopyChocolateTSLib" Inputs="$(MSBuildThisFileDirectory)ChocolateTS.js" Outputs="$(OutputDirectory)ChocolateTS.js">
