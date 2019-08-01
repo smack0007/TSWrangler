@@ -6,7 +6,7 @@ queue:
 
 steps:
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet build'
+  displayName: 'dotnet msbuild'
   inputs:
     projects: ChocolateTS.proj
-    arguments: '/v:n /p:Configuration=Release'
+    arguments: '-v:n -t:Setup;Build -p:Configuration=Release'

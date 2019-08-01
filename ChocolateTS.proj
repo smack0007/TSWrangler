@@ -4,6 +4,15 @@
     </PropertyGroup>
 
     <!--
+    Setup
+    -->
+
+    <Target Name="Setup">
+        <Exec Command="npm i -g typescript" />
+        <Exec Command="npm i -g node-sass" />
+    </Target>
+
+    <!--
     Build
     -->
 
