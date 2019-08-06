@@ -10,5 +10,11 @@
         <NwjsRootDirectory>$(RepositoryRootDirectory)ext/nwjs/</NwjsRootDirectory>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Assets Include="$(RepositoryRootDirectory)assets/Logo.png">
+            <OutputPath>images/logo.png</OutputPath>
+        </Assets>
+    </ItemGroup>
+
     <Import Project="../../src/ChocolateTS.targets" />
 </Project>

@@ -141,19 +141,26 @@
     <Target Name="CopyAssets" Outputs="%(Assets.Identity)">
         <ItemGroup>
             <Assets Condition="%(Assets.OutputPath) == ''">
-                <OutputPath>%(Assets.RelativeDir)%(Assets.FileName)%(Assets.Extension)</OutputPath>
+                <OutputPath>%(Assets.RelativeDir)%(Assets.RecursiveDir)%(Assets.FileName)%(Assets.Extension)</OutputPath>
             </Assets>
         </ItemGroup>
         
-        <Copy SourceFiles="%(Assets.Identity)" DestinationFiles="$(OutputDirectory)%(Assets.OutputPath)" />
+        <Copy
+            SourceFiles="%(Assets.Identity)"
+            DestinationFiles="$(OutputDirectory)%(Assets.OutputPath)"
+            SkipUnchangedFiles="true" />
     </Target>
 
     <Target Name="CopyChocolateTSLib" Inputs="$(MSBuildThisFileDirectory)ChocolateTS.js" Outputs="$(OutputDirectory)ChocolateTS.js">
-        <Copy SourceFiles="$(MSBuildThisFileDirectory)ChocolateTS.js" DestinationFiles="$(OutputDirectory)ChocolateTS.js" />
+        <Copy
+            SourceFiles="$(MSBuildThisFileDirectory)ChocolateTS.js"
+            DestinationFiles="$(OutputDirectory)ChocolateTS.js" />
     </Target>
 
     <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">
-        <Copy SourceFiles="$(SourceDirectory)$(NwjsManifestPath)" DestinationFiles="$(OutputDirectory)package.json" />
+        <Copy
+            SourceFiles="$(SourceDirectory)$(NwjsManifestPath)"
+            DestinationFiles="$(OutputDirectory)package.json" />
     </Target>
 
     <!--
