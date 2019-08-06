@@ -5,3 +5,6 @@ node_modules/
 
 # nwjs is too big
 ext/nwjs/
+
+# ChocolateTS.js should be built.
+src/ChocolateTS.js

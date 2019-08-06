@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputPath>$(MSBuildThisFileDirectory)bin</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.0.461" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.js">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\ChocolateTS.js</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.props">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\Sdk.props</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.targets">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\Sdk.targets</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.ts">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\ChocolateTS.ts</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)tsconfig.json">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\tsconfig.json</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <Target Name="BuildTs" BeforeTargets="BeforeBuild" Inputs="./src/ChocolateTS.ts" Outputs="./src/ChocolateTS.js">
+    <Exec Command="tsc ChocolateTS.ts" />
+  </Target>
+</Project>

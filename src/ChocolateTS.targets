@@ -1,6 +1,6 @@
 <Project DefaultTargets="Build">    
     <PropertyGroup>
-        <ChocolateMSBuildTasksAssemblyFile>$(MSBuildThisFileDirectory)/ChocolateTS.Build.Tasks.dll</ChocolateMSBuildTasksAssemblyFile>
+        <ChocolateMSBuildTasksAssemblyFile>$(MSBuildThisFileDirectory)/../lib/netstandard2.0/ChocolateTS.Build.Sdk.dll</ChocolateMSBuildTasksAssemblyFile>
     </PropertyGroup>
 
     <UsingTask TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />

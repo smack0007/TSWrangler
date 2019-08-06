@@ -16,12 +16,10 @@
     Build
     -->
 
-    <Target Name="Build" DependsOnTargets="BuildChocolateTSLib;BuildHelloWorld" />
+    <Target Name="Build" DependsOnTargets="BuildSdk;BuildHelloWorld" />
     
-    <Target Name="BuildChocolateTSLib" Inputs="./src/ChocolateTS.ts" Outputs="./src/ChocolateTS.js">
-        <Exec
-            Command="tsc ChocolateTS.ts"
-            WorkingDirectory="./src/" />
+    <Target Name="BuildSdk">
+        <MSBuild Projects="src/ChocolateTS.Build.Sdk.csproj" Targets="Pack" Properties="OutputPath=$(MSBuildThisFileDirectory)bin" />
     </Target>
 
     <Target Name="BuildHelloWorld">
@@ -43,4 +41,8 @@
     <Target Name="ServeHelloWorld">
         <MSBuild Projects="$(HelloWorldProject)" Targets="Serve" />
     </Target>
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
 </Project>
