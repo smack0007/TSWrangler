@@ -35,12 +35,16 @@
     -->
 
     <PropertyGroup>
-        <BuildDependencies>BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
+        <BuildDependencies>EnsureOutputDirectories;BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
         <BuildDependencies Condition="$(CopyChocolateTSLibToOutput)">$(BuildDependencies);CopyChocolateTSLib</BuildDependencies>
         <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
 
     <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
+
+    <Target Name="EnsureOutputDirectories">
+        <MakeDir Directories="$(IntermediateOutputDirectory);$(OutputDirectory)" />
+    </Target>
 
     <Target Name="BuildTs" Outputs="%(TsEntryPoints.Identity)">
         <Error
