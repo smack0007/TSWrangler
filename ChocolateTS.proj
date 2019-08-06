@@ -19,7 +19,7 @@
     <Target Name="Build" DependsOnTargets="BuildSdk;BuildHelloWorld" />
     
     <Target Name="BuildSdk">
-        <MSBuild Projects="src/ChocolateTS.Build.Sdk.csproj" Targets="Pack" Properties="OutputPath=$(MSBuildThisFileDirectory)bin" />
+        <MSBuild Projects="src/ChocolateTS.Build.Sdk.csproj" Targets="Restore;Pack" Properties="OutputPath=$(MSBuildThisFileDirectory)bin" />
     </Target>
 
     <Target Name="BuildHelloWorld">
