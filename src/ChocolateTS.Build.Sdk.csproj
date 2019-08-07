@@ -15,17 +15,17 @@
       <Pack>true</Pack>
       <PackagePath>Sdk\ChocolateTS.js</PackagePath>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.props">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\Sdk.props</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.targets">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\Sdk.targets</PackagePath>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)ChocolateTS.ts">
       <Pack>true</Pack>
       <PackagePath>Sdk\ChocolateTS.ts</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Sdk.props">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\Sdk.props</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Sdk.targets">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\Sdk.targets</PackagePath>
     </None>
     <None Include="$(MSBuildThisFileDirectory)tsconfig.json">
       <Pack>true</Pack>
