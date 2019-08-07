@@ -19,7 +19,8 @@
         <Copyright>Copyright © Zachary Snow $(CurrentYear)</Copyright>
 
         <PackageProjectUrl>https://github.com/smack0007/ChocolateTS/</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/smack0007/ChocolateTS/master/License.txt</PackageLicenseUrl>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+
         <PackageTags>MSBuild;TypeScript</PackageTags>
 
         <RepositoryType>git</RepositoryType>
@@ -29,4 +30,9 @@
         <VersionPrefix Condition="$(Configuration) == 'Debug'">0.0.1</VersionPrefix>
         <VersionPostfix Condition="$(Configuration) == 'Debug'">0</VersionPostfix>
     </PropertyGroup>
+
+    <ItemGroup>
+        <!-- NuGet -->
+        <None Include="$(MSBuildThisFileDirectory)License.txt" Pack="true" PackagePath="License.txt"/>
+    </ItemGroup>
 </Project>

@@ -9,19 +9,19 @@
     <ItemGroup>
         <!-- Add default SCSS entry point. -->
         <TsEntryPoints
-            Condition="@(TsEntryPoints) == ''"
+            Condition="@(TsEntryPoints) == '' And Exists('$(SourceDirectory)main.ts')"
             Include="main.ts"
             OutputPath="$(MSBuildProjectName).js" />
         
         <!-- Add default SCSS entry point. -->
         <ScssEntryPoints
-            Condition="@(ScssEntryPoints) == ''"
+            Condition="@(ScssEntryPoints) == '' And Exists('$(SourceDirectory)main.scss')"
             Include="main.scss"
             OutputPath="$(MSBuildProjectName).css" />
         
         <!-- Add default HTML entry point. -->
         <HtmlEntryPoints
-            Condition="'@(HtmlEntryPoints)' == ''"
+            Condition="'@(HtmlEntryPoints)' == '' And Exists('$(SourceDirectory)main.html')"
             Include="main.html"
             OutputPath="index.html" />
 
@@ -49,7 +49,7 @@
     <Target Name="BuildTs" Outputs="%(TsEntryPoints.Identity)">
         <Error
             Condition="!Exists('$(SourceDirectory)%(TsEntryPoints.Identity)')"
-            Text="Scss entry point '$(SourceDirectory)%(TsEntryPoints.Identity)' does not exist." />
+            Text="Ts entry point '$(SourceDirectory)%(TsEntryPoints.Identity)' does not exist." />
         
         <ItemGroup>
             <TsEntryPoints Condition="%(TsEntryPoints.OutputPath) == ''">
