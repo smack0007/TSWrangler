@@ -11,26 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.js">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\ChocolateTS.js</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.ts">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\ChocolateTS.ts</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Sdk.props">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\Sdk.props</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Sdk.targets">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\Sdk.targets</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)tsconfig.json">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\tsconfig.json</PackagePath>
-    </None>
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.js" Pack="true" PackagePath="Sdk/ChocolateTS.js" />
+    <None Include="$(MSBuildThisFileDirectory)Sdk.*" Pack="true" PackagePath="Sdk/%(None.Filename)%(None.Extension)" />
+    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.ts" Pack="true" PackagePath="Sdk/ChocolateTS.ts" />
+    <None Include="$(MSBuildThisFileDirectory)tsconfig.json" Pack="true" PackagePath="Sdk/tsconfig.json" />
   </ItemGroup>
 
   <Target Name="BuildTs" BeforeTargets="BeforeBuild" Inputs="./src/ChocolateTS.ts" Outputs="./src/ChocolateTS.js">

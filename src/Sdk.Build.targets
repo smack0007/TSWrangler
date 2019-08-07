@@ -1,0 +1,158 @@
+<Project>
+    <ItemGroup>
+        <!-- Add default SCSS entry point. -->
+        <TsEntryPoints
+            Condition="@(TsEntryPoints) == '' And Exists('$(SourceDirectory)main.ts')"
+            Include="main.ts"
+            OutputPath="$(MSBuildProjectName).js" />
+        
+        <!-- Add default SCSS entry point. -->
+        <ScssEntryPoints
+            Condition="@(ScssEntryPoints) == '' And Exists('$(SourceDirectory)main.scss')"
+            Include="main.scss"
+            OutputPath="$(MSBuildProjectName).css" />
+        
+        <!-- Add default HTML entry point. -->
+        <HtmlEntryPoints
+            Condition="'@(HtmlEntryPoints)' == '' And Exists('$(SourceDirectory)main.html')"
+            Include="main.html"
+            OutputPath="index.html" />
+
+        <Assets
+            Condition="Exists('$(AssetsDirectory)')"
+            Include="$(AssetsDirectory)**/*" />
+    </ItemGroup>
+    
+    <PropertyGroup>
+        <BuildDependencies>EnsureOutputDirectories;BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
+        <BuildDependencies Condition="$(CopyChocolateTSLibToOutput)">$(BuildDependencies);CopyChocolateTSLib</BuildDependencies>
+        <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
+
+    <Target Name="EnsureOutputDirectories">
+        <MakeDir Directories="$(IntermediateOutputDirectory);$(OutputDirectory)" />
+    </Target>
+
+    <Target Name="BuildTs" Outputs="%(TsEntryPoints.Identity)">
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(TsEntryPoints.Identity)')"
+            Text="Ts entry point '$(SourceDirectory)%(TsEntryPoints.Identity)' does not exist." />
+        
+        <ItemGroup>
+            <TsEntryPoints Condition="%(TsEntryPoints.OutputPath) == ''">
+                <OutputPath>%(TsEntryPoints.RelativeDir)%(TsEntryPoints.FileName).js</OutputPath>
+            </TsEntryPoints>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <_TsOutputPath>$(OutputDirectory)%(TsEntryPoints.OutputPath)</_TsOutputPath>
+        </PropertyGroup>
+
+        <Exec
+            Command="tsc &quot;$(SourceDirectory)%(TsEntryPoints.Identity)&quot; $(TsCompilerFlags) --outFile &quot;$(_TsOutputPath)&quot;"
+            ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="_TscExitCode" />
+        </Exec>
+
+        <Error
+            Condition="$(_TscExitCode) != 0"
+            Text="tsc exited with code $(_TscExitCode)." />
+    </Target>
+
+    <Target Name="BuildScss" Outputs="%(ScssEntryPoints.Identity)">
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(ScssEntryPoints.Identity)')"
+            Text="Scss entry point '$(SourceDirectory)%(ScssEntryPoints.Identity)' does not exist." />
+
+        <ItemGroup>
+            <ScssEntryPoints Condition="%(ScssEntryPoints.OutputPath) == ''">
+                <OutputPath>%(ScssEntryPoints.RelativeDir)%(ScssEntryPoints.FileName).css</OutputPath>
+            </ScssEntryPoints>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <_ScssIntermediateOutputPath>$(IntermediateOutputDirectory)%(ScssEntryPoints.RelativeDir)%(ScssEntryPoints.FileName).scss</_ScssIntermediateOutputPath>
+            <_ScssOutputPath>$(OutputDirectory)%(ScssEntryPoints.OutputPath)</_ScssOutputPath>
+        </PropertyGroup>
+
+        <ResolveScssImports EntryPointPath="%(ScssEntryPoints.Identity)" SourceDirectory="$(SourceDirectory)">
+            <Output TaskParameter="Output" PropertyName="_ScssOutput" />
+        </ResolveScssImports>
+
+        <Message Text="Writing &quot;$(_ScssIntermediateOutputPath)&quot;" />
+
+        <WriteLinesToFile
+            File="$(_ScssIntermediateOutputPath)"
+            Overwrite="true"
+            Lines="$(_ScssOutput)" />
+
+        <Exec
+            Command="node-sass $(ScssCompilerFlags) &quot;$(_ScssIntermediateOutputPath)&quot;"
+            ConsoleToMSBuild="true"
+            ContinueOnError="true">
+            <Output TaskParameter="ConsoleOutput" PropertyName="_ScssOutput" />
+            <Output TaskParameter="ExitCode" PropertyName="_NodeSassExitCode" />
+        </Exec>
+
+        <Error
+            Condition="$(_NodeSassExitCode) != 0"
+            Text="node-sass exited with code $(_NodeSassExitCode)." />
+
+        <Message Text="Writing &quot;$(_ScssOutputPath)&quot;" />
+
+        <WriteLinesToFile
+            File="$(_ScssOutputPath)"
+            Overwrite="true"
+            Lines="$(_ScssOutput)" />
+    </Target>
+
+    <Target Name="BuildHtml" Outputs="%(HtmlEntryPoints.Identity)">        
+        <Error
+            Condition="!Exists('$(SourceDirectory)%(HtmlEntryPoints.Identity)')"
+            Text="Html entry point '$(SourceDirectory)%(HtmlEntryPoints.Identity)' does not exist." />
+        
+        <ItemGroup>
+            <HtmlEntryPoints Condition="%(HtmlEntryPoints.OutputPath) == ''">
+                <OutputPath>%(HtmlEntryPoints.RelativeDir)%(HtmlEntryPoints.FileName).html</OutputPath>
+            </HtmlEntryPoints>
+        </ItemGroup>
+
+        <ResolveHtmlImports EntryPointPath="%(HtmlEntryPoints.Identity)" SourceDirectory="$(SourceDirectory)">
+            <Output TaskParameter="Output" PropertyName="_HtmlOutput" />
+        </ResolveHtmlImports>
+
+        <Message Text="Writing &quot;$(OutputDirectory)%(HtmlEntryPoints.OutputPath)&quot;" />
+
+        <WriteLinesToFile
+            File="$(OutputDirectory)%(HtmlEntryPoints.OutputPath)"
+            Overwrite="true"
+            Lines="$(_HtmlOutput)" />
+    </Target>
+
+    <Target Name="CopyAssets" Outputs="%(Assets.Identity)">
+        <ItemGroup>
+            <Assets Condition="%(Assets.OutputPath) == ''">
+                <OutputPath>%(Assets.RelativeDir)%(Assets.RecursiveDir)%(Assets.FileName)%(Assets.Extension)</OutputPath>
+            </Assets>
+        </ItemGroup>
+        
+        <Copy
+            SourceFiles="%(Assets.Identity)"
+            DestinationFiles="$(OutputDirectory)%(Assets.OutputPath)"
+            SkipUnchangedFiles="true" />
+    </Target>
+
+    <Target Name="CopyChocolateTSLib" Inputs="$(MSBuildThisFileDirectory)ChocolateTS.js" Outputs="$(OutputDirectory)ChocolateTS.js">
+        <Copy
+            SourceFiles="$(MSBuildThisFileDirectory)ChocolateTS.js"
+            DestinationFiles="$(OutputDirectory)ChocolateTS.js" />
+    </Target>
+
+    <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">
+        <Copy
+            SourceFiles="$(SourceDirectory)$(NwjsManifestPath)"
+            DestinationFiles="$(OutputDirectory)package.json" />
+    </Target>
+</Project>
