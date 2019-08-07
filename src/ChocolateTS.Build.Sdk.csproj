@@ -3,6 +3,29 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputPath>$(MSBuildThisFileDirectory)bin</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- NuGet -->
+    <CurrentYear>$([System.DateTime]::Now.ToString(yy))</CurrentYear>
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <PatchNumber Condition=" $(PatchNumber) == '' ">0</PatchNumber>
+    <BuildNumber Condition=" $(BuildNumber) == '' ">0</BuildNumber>
+    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchNumber)</VersionPrefix>
+    <VersionPostfix>$(BuildNumber)</VersionPostfix>
+
+    <Authors>smack0007</Authors>
+    <Copyright>Copyright © Zachary Snow $(CurrentYear)</Copyright>
+
+    <PackageProjectUrl>https://github.com/smack0007/ChocolateTS/</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/smack0007/ChocolateTS/master/License.txt</PackageLicenseUrl>
+    <PackageTags>MSBuild;TypeScript</PackageTags>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/smack0007/ChocolateTS.git</RepositoryUrl>
+
+    <!-- Debug builds always output 0.0.1 for the version. -->
+    <VersionPrefix Condition="$(Configuration) == 'Debug'">0.0.1</VersionPrefix>
+    <VersionPostfix Condition="$(Configuration) == 'Debug'">0</VersionPostfix>
   </PropertyGroup>
 
   <ItemGroup>

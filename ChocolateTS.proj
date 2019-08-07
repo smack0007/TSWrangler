@@ -1,4 +1,6 @@
 <Project>
+    <Import Project="Directory.Build.props" />
+
     <PropertyGroup>
         <HelloWorldProject>samples/HelloWorld/HelloWorld.proj</HelloWorldProject>
     </PropertyGroup>
@@ -20,7 +22,7 @@
     
     <Target Name="BuildSdk">
         <Exec Command="dotnet restore /v:n" WorkingDirectory="src" />
-        <Exec Command="dotnet pack /v:n /p:OutputPath=$(MSBuildThisFileDirectory)bin" WorkingDirectory="src" />
+        <Exec Command="dotnet pack /v:n /p:Configuration=$(Configuration);OutputPath=$(MSBuildThisFileDirectory)bin" WorkingDirectory="src" />
     </Target>
 
     <Target Name="BuildHelloWorld">
