@@ -11,4 +11,9 @@ steps:
     command: 'custom'
     custom: 'msbuild'
     projects: ChocolateTS.proj
-    arguments: '-v:n -t:Setup;Build -p:Configuration=Release'
+    arguments: '-v:n -t:Setup;Build -p:Configuration=Release;BuildNumber=$(Build.BuildNumber)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: ChocolateTS.Build.Sdk'
+  inputs:
+    artifactName: 'ChocolateTS.Build.Sdk'
