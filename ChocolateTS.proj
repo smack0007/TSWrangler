@@ -19,7 +19,8 @@
     <Target Name="Build" DependsOnTargets="BuildSdk;BuildHelloWorld" />
     
     <Target Name="BuildSdk">
-        <MSBuild Projects="src/ChocolateTS.Build.Sdk.csproj" Targets="Restore;Pack" Properties="OutputPath=$(MSBuildThisFileDirectory)bin" />
+        <Exec Command="dotnet restore /v:n" WorkingDirectory="src" />
+        <Exec Command="dotnet pack /v:n /p:OutputPath=$(MSBuildThisFileDirectory)bin" WorkingDirectory="src" />
     </Target>
 
     <Target Name="BuildHelloWorld">
@@ -41,8 +42,4 @@
     <Target Name="ServeHelloWorld">
         <MSBuild Projects="$(HelloWorldProject)" Targets="Serve" />
     </Target>
-
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-    </PropertyGroup>
 </Project>
