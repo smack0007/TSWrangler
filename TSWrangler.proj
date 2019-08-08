@@ -21,12 +21,17 @@
     <Target Name="Build" DependsOnTargets="BuildSdk;BuildHelloWorld" />
     
     <Target Name="BuildSdk">
+        <!-- Clear the local cache for the SDK package. -->
+        <RemoveDir
+            Condition="$(Configuration) == 'Debug'"
+            Directories="$(UserProfile)/.nuget/packages/tswrangler.build.sdk/0.0.1" />
+
         <Exec Command="dotnet restore /v:n" WorkingDirectory="src" />
         <Exec Command="dotnet pack /v:n /p:Configuration=$(Configuration);OutputPath=$(MSBuildThisFileDirectory)bin" WorkingDirectory="src" />
     </Target>
 
     <Target Name="BuildHelloWorld">
-        <MSBuild Projects="$(HelloWorldProject)" Targets="Build" />
+        <MSBuild Projects="$(HelloWorldProject)" Targets="Restore;Build" />
     </Target>
 
     <!--

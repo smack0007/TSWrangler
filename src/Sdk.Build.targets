@@ -17,19 +17,15 @@
             Condition="'@(HtmlEntryPoints)' == '' And Exists('$(SourceDirectory)main.html')"
             Include="main.html"
             OutputPath="index.html" />
-
-        <Assets
-            Condition="Exists('$(AssetsDirectory)')"
-            Include="$(AssetsDirectory)**/*" />
     </ItemGroup>
     
     <PropertyGroup>
-        <BuildDependencies>EnsureOutputDirectories;BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
+        <BuildDependencies>DebugInfo;EnsureOutputDirectories;BuildTs;BuildScss;BuildHtml;CopyAssets;CopyStaticFiles</BuildDependencies>
         <BuildDependencies Condition="$(CopyTSWranglerLibToOutput)">$(BuildDependencies);CopyTSWranglerLib</BuildDependencies>
         <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
 
-    <Target Name="Build" DependsOnTargets="DebugInfo;$(BuildDependencies)" />
+    <Target Name="Build" DependsOnTargets="$(BuildDependencies)" />
 
     <Target Name="EnsureOutputDirectories">
         <MakeDir Directories="$(IntermediateOutputDirectory);$(OutputDirectory)" />
@@ -131,16 +127,25 @@
             Lines="$(_HtmlOutput)" />
     </Target>
 
-    <Target Name="CopyAssets" Outputs="%(Assets.Identity)">
+    <Target Name="CopyAssets" Condition="Exists('$(AssetsDirectory)')">
         <ItemGroup>
-            <Assets Condition="%(Assets.OutputPath) == ''">
-                <OutputPath>%(Assets.RelativeDir)%(Assets.RecursiveDir)%(Assets.FileName)%(Assets.Extension)</OutputPath>
-            </Assets>
+            <_Assets Include="$(AssetsDirectory)**/*" />
         </ItemGroup>
         
         <Copy
-            SourceFiles="%(Assets.Identity)"
-            DestinationFiles="$(OutputDirectory)%(Assets.OutputPath)"
+            SourceFiles="%(_Assets.Identity)"
+            DestinationFiles="$(OutputDirectory)%(_Assets.RelativeDir)%(_Assets.RecursiveDir)%(_Assets.FileName)%(_Assets.Extension)"
+            SkipUnchangedFiles="true" />
+    </Target>
+
+    <Target Name="CopyStaticFiles">
+        <Error
+            Condition="%(StaticFiles.OutputPath) == ''"
+            Message="Static file '%(StaticFiles.Identity)' has no OutputPath specified. All static files must specify an OutputPath.'" />
+
+        <Copy
+            SourceFiles="%(StaticFiles.Identity)"
+            DestinationFiles="$(OutputDirectory)%(StaticFiles.OutputPath)"
             SkipUnchangedFiles="true" />
     </Target>
 

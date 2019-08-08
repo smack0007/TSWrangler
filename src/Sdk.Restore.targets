@@ -1,0 +1,5 @@
+<Project>
+    <Target Name="Restore" DependsOnTargets="DebugInfo" Outputs="%(PackageReference.Identity)">
+        <Exec Command="npm install %(PackageReference.Identity)@%(PackageReference.Version)" />
+    </Target>
+</Project>

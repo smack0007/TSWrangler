@@ -2,6 +2,7 @@
 bin/
 obj/
 node_modules/
+package-lock.json
 
 # nwjs is too big
 ext/nwjs/

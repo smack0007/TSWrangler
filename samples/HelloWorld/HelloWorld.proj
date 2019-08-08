@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Assets Include="$(RepositoryRootDirectory)assets/Logo.png">
-            <OutputPath>images/logo.png</OutputPath>
-        </Assets>
+        <PackageReference Include="bootstrap" Version="4.3.1" />
+
+        <StaticFiles Include="node_modules/bootstrap/dist/css/bootstrap.min.css" OutputPath="bootstrap.min.css" />
     </ItemGroup>
 </Project>
