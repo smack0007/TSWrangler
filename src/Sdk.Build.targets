@@ -25,7 +25,7 @@
     
     <PropertyGroup>
         <BuildDependencies>EnsureOutputDirectories;BuildTs;BuildScss;BuildHtml;CopyAssets</BuildDependencies>
-        <BuildDependencies Condition="$(CopyChocolateTSLibToOutput)">$(BuildDependencies);CopyChocolateTSLib</BuildDependencies>
+        <BuildDependencies Condition="$(CopyTSWranglerLibToOutput)">$(BuildDependencies);CopyTSWranglerLib</BuildDependencies>
         <BuildDependencies Condition="$(OutputType) == 'Nwjs'">$(BuildDependencies);CopyNwjsManifest</BuildDependencies>
     </PropertyGroup>
 
@@ -144,10 +144,10 @@
             SkipUnchangedFiles="true" />
     </Target>
 
-    <Target Name="CopyChocolateTSLib" Inputs="$(MSBuildThisFileDirectory)ChocolateTS.js" Outputs="$(OutputDirectory)ChocolateTS.js">
+    <Target Name="CopyTSWranglerLib" Inputs="$(MSBuildThisFileDirectory)TSWrangler.js" Outputs="$(OutputDirectory)TSWrangler.js">
         <Copy
-            SourceFiles="$(MSBuildThisFileDirectory)ChocolateTS.js"
-            DestinationFiles="$(OutputDirectory)ChocolateTS.js" />
+            SourceFiles="$(MSBuildThisFileDirectory)TSWrangler.js"
+            DestinationFiles="$(OutputDirectory)TSWrangler.js" />
     </Target>
 
     <Target Name="CopyNwjsManifest" Inputs="$(SourceDirectory)$(NwjsManifestPath)" Outputs="$(OutputDirectory)package.json">

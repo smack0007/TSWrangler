@@ -1,10 +1,10 @@
 <Project DefaultTargets="Build">    
     <PropertyGroup>
-        <ChocolateMSBuildTasksAssemblyFile>$(MSBuildThisFileDirectory)/../lib/netstandard2.0/ChocolateTS.Build.Sdk.dll</ChocolateMSBuildTasksAssemblyFile>
+        <ChocolateMSBuildTasksAssemblyFile>$(MSBuildThisFileDirectory)/../lib/netstandard2.0/TSWrangler.Build.Sdk.dll</ChocolateMSBuildTasksAssemblyFile>
     </PropertyGroup>
 
-    <UsingTask TaskName="ChocolateTS.Build.Tasks.ResolveHtmlImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
-    <UsingTask TaskName="ChocolateTS.Build.Tasks.ResolveScssImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
+    <UsingTask TaskName="TSWrangler.Build.Tasks.ResolveHtmlImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
+    <UsingTask TaskName="TSWrangler.Build.Tasks.ResolveScssImports" AssemblyFile="$(ChocolateMSBuildTasksAssemblyFile)" />
 
     <Import Project="$(MSBuildThisFileDirectory)Sdk.Build.targets" />
 

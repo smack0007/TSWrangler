@@ -25,7 +25,7 @@
         <IntermediateOutputDirectory Condition="$(IntermediateOutputDirectory) == ''">./obj/</IntermediateOutputDirectory>
         <AssetsDirectory Condition="$(AssetsDirectory) == ''">./assets/</AssetsDirectory>
 
-        <CopyChocolateTSLibToOutput Condition="$(CopyChocolateTSLibToOutput) == ''">true</CopyChocolateTSLibToOutput>
+        <CopyTSWranglerLibToOutput Condition="$(CopyTSWranglerLibToOutput) == ''">true</CopyTSWranglerLibToOutput>
 
         <TsCompilerFlags>-t ES2015 -m AMD --forceConsistentCasingInFileNames --strict --incremental --sourceMap --removeComments</TsCompilerFlags>
         <TsMainPath Condition="$(TsMainPath) == ''">main.ts</TsMainPath>

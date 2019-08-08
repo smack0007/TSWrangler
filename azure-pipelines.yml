@@ -10,17 +10,17 @@ steps:
   inputs:
     command: 'custom'
     custom: 'msbuild'
-    projects: ChocolateTS.proj
+    projects: TSWrangler.proj
     arguments: '-v:n -t:Setup;Build -p:Configuration=Release'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
   inputs:
     command: pack
-    packagesToPack: src/ChocolateTS.Build.Sdk.csproj
+    packagesToPack: src/TSWrangler.Build.Sdk.csproj
     buildProperties: 'Configuration=Release;BuildNumber=$(Build.BuildNumber)'
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: ChocolateTS.Build.Sdk'
+  displayName: 'Publish Artifact: TSWrangler.Build.Sdk'
   inputs:
-    artifactName: 'ChocolateTS.Build.Sdk'
+    artifactName: 'TSWrangler.Build.Sdk'

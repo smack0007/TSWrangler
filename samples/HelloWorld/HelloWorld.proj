@@ -1,4 +1,4 @@
-<Project Sdk="ChocolateTS.Build.Sdk">
+<Project Sdk="TSWrangler.Build.Sdk">
     <PropertyGroup>
         <ServePort>4567</ServePort>
 

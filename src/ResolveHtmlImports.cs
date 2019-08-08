@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 
-namespace ChocolateTS.Build.Tasks
+namespace TSWrangler.Build.Tasks
 {
     public class ResolveHtmlImports : Microsoft.Build.Utilities.Task
     {

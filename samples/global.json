@@ -1,5 +1,5 @@
 {
     "msbuild-sdks": {
-        "ChocolateTS.Build.Sdk": "0.0.1"
+        "TSWrangler.Build.Sdk": "0.0.1"
     }
 }

@@ -18,13 +18,13 @@
         <CurrentYear>$([System.DateTime]::Now.ToString(yy))</CurrentYear>
         <Copyright>Copyright © Zachary Snow $(CurrentYear)</Copyright>
 
-        <PackageProjectUrl>https://github.com/smack0007/ChocolateTS/</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/smack0007/TSWrangler/</PackageProjectUrl>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
 
         <PackageTags>MSBuild;TypeScript</PackageTags>
 
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/smack0007/ChocolateTS.git</RepositoryUrl>
+        <RepositoryUrl>https://github.com/smack0007/TSWrangler.git</RepositoryUrl>
 
         <!-- Debug builds always output 0.0.1 for the version. -->
         <VersionPrefix Condition="$(Configuration) == 'Debug'">0.0.1</VersionPrefix>

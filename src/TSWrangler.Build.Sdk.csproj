@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.js" Pack="true" PackagePath="Sdk/ChocolateTS.js" />
+    <None Include="$(MSBuildThisFileDirectory)TSWrangler.js" Pack="true" PackagePath="Sdk/TSWrangler.js" />
     <None Include="$(MSBuildThisFileDirectory)Sdk.*" Pack="true" PackagePath="Sdk/%(None.Filename)%(None.Extension)" />
-    <None Include="$(MSBuildThisFileDirectory)ChocolateTS.ts" Pack="true" PackagePath="Sdk/ChocolateTS.ts" />
+    <None Include="$(MSBuildThisFileDirectory)TSWrangler.ts" Pack="true" PackagePath="Sdk/TSWrangler.ts" />
     <None Include="$(MSBuildThisFileDirectory)tsconfig.json" Pack="true" PackagePath="Sdk/tsconfig.json" />
   </ItemGroup>
 
-  <Target Name="BuildTs" BeforeTargets="BeforeBuild" Inputs="./src/ChocolateTS.ts" Outputs="./src/ChocolateTS.js">
-    <Exec Command="tsc ChocolateTS.ts" />
+  <Target Name="BuildTs" BeforeTargets="BeforeBuild" Inputs="./src/TSWrangler.ts" Outputs="./src/TSWrangler.js">
+    <Exec Command="tsc TSWrangler.ts" />
   </Target>
 </Project>
