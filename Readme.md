@@ -33,7 +33,7 @@ but html files are scanned for `<import src="file.html"></import>` tags.
 
 ## Credits
 
-Adapted logo `Ice Cream` by [Kieu Thi Kim Cuong](https://thenounproject.com/kieukimcuong/) from the Noun Project.
+Adapted logo `Lasso` by [Hea Poh Lin](https://thenounproject.com/charlenehea/) from the Noun Project.
 
 ## Author
 
