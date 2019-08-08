@@ -33,7 +33,7 @@ but html files are scanned for `<import src="file.html"></import>` tags.
 
 ## Credits
 
-Adapted logo `Lasso` by [Hea Poh Lin](https://thenounproject.com/charlenehea/) from the Noun Project.
+Adapted logo [Lasso](https://thenounproject.com/search/?q=lasso&creator=1547385&i=487006) by [Hea Poh Lin](https://thenounproject.com/charlenehea/) from the Noun Project.
 
 ## Author
 
