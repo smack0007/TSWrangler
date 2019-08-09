@@ -1,0 +1,16 @@
+<Project Sdk="TSWrangler.Build.Sdk">
+    <PropertyGroup>
+        <ServePort>4567</ServePort>
+
+        <OutputType>Nwjs</OutputType>
+
+        <!-- Temporary until I get Directory.Build.props working properly. -->
+        <NwjsRootDirectory>$(RepositoryRootDirectory)ext/nwjs/</NwjsRootDirectory>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="bootstrap" Version="4.3.1" />
+
+        <StaticFiles Include="node_modules/bootstrap/dist/css/bootstrap.min.css" OutputPath="bootstrap.min.css" />
+    </ItemGroup>
+</Project>

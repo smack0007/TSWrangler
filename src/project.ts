@@ -1,3 +1,5 @@
 export class Project {
-    public name: string = '';
+    public sourceDirectory: string = '';
+
+    public outputDirectory: string = '';
 }

@@ -1,0 +1,55 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "msbuild",
+                "/t:Build",
+                "/v:n"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build HelloWorld",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "msbuild",
+                "/t:BuildHelloWorld",
+                "/v:n"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run HelloWorld",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "msbuild",
+                "/t:RunHelloWorld",
+                "/v:n"
+            ],
+            "group": "none",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

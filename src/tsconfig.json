@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
     "target": "es6",                          
-    "module": "amd",                     
+    "module": "amd",                 
     "strict": true,
-    "esModuleInterop": true,
     "outFile": "./bin/TSWrangler.js",
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ]          
+    }
   }, 
   "files": [
     "bootstrapper.ts",
